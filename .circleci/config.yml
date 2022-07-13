@@ -65,7 +65,9 @@ jobs:
       - run:
           name: Analyze frontend packages for vulnerabilities
           command: |
-            cd frontend && npm install && npm audit --audit-level=critical
+            cd frontend && npm install && \
+            npm audit fix --audit-level=critical --force && \
+            npm audit --audit-level=critical
 
   scan-backend:
     docker:
@@ -76,7 +78,10 @@ jobs:
           keys: [backend-build]
       - run:
           name: Analyze backend packages for vulnerabilities
-          command: cd backend && npm install && npm audit --audit-level=critical   
+          command: |
+            cd backend && npm install && \
+            npm audit fix --audit-level=critical --force && \
+            npm audit --audit-level=critical   
 
 workflows:
   default:
