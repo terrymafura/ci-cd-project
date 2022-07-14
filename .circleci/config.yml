@@ -130,15 +130,16 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicDnsName' \
-              --filters "Name=tag:project,Values=terry-udapeople" \
-              --output text >> ci-cd-project/.circleci/ansible/inventory.txt \
-            echo inventory.txt
+            pwd
+            # aws ec2 describe-instances \
+            #   --query 'Reservations[*].Instances[*].PublicDnsName' \
+            #   --filters "Name=tag:project,Values=terry-udapeople" \
+            #   --output text >> project/.circleci/ansible/inventory.txt \
+            # echo inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - ci-cd-project/.circleci/ansible/inventory.txt
+            - project/.circleci/ansible/inventory.txt
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID}
 
