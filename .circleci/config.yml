@@ -130,17 +130,15 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            cd ~/ && mkdir -p project/.circleci/ansible && cd project/.circleci/ansible \
-            touch inventory.txt && echo "[web]" > inventory.txt \
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=terry-udapeople" \
-              --output text >> inventory.txt \
+              --output text >> ci-cd-project/.circleci/ansible/inventory.txt \
             echo inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - ci-cd-project/.circleci/ansible/inventory.txt
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID}
 
@@ -156,7 +154,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible tar gzip \
+            apk add --update ansible tar gzip && \
             python3 -m pip install awscliv2 && ~/.local/bin/awscliv2 --install \
             echo 'export PATH=$PATH:~/.local/bin' >>~/.bashrc \
             echo 'alias aws="awsv2"' >>~/.bashrc \
