@@ -135,7 +135,8 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=terry-udapeople" \
-              --output text >> invetory.txt
+              --output text >> invetory.txt \
+            cat inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
