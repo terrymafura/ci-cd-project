@@ -131,11 +131,11 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             mkdir -p project/.circleci/ansible && cd project/.circleci/ansible \
-            touch invetory.txt && echo "[web]" > invetory.txt \
+            touch inventory.txt && echo "[web]" > inventory.txt \
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=terry-udapeople" \
-              --output text >> invetory.txt \
+              --output text >> inventory.txt \
             cat inventory.txt
       - persist_to_workspace:
           root: ~/
