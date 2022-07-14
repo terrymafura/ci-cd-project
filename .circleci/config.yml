@@ -130,19 +130,46 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            mkdir -p project/.circleci/ansible && cd project/.circleci/ansible \
+            cd ~/ && mkdir -p project/.circleci/ansible && cd project/.circleci/ansible \
             touch inventory.txt && echo "[web]" > inventory.txt \
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=terry-udapeople" \
               --output text >> inventory.txt \
-            cat inventory.txt
+            echo inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
-            - project/.circleci/ansible/inventory.txt
+            - ~/project/.circleci/ansible/inventory.txt
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID}
+
+  configure-infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["3c:7d:40:74:8c:f9:35:1e:c2:5f:11:bc:59:56:0e:c7"]
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible tar gzip \
+            python3 -m pip install awscliv2 && ~/.local/bin/awscliv2 --install \
+            echo 'export PATH=$PATH:~/.local/bin' >>~/.bashrc \
+            echo 'alias aws="awsv2"' >>~/.bashrc \
+            source ~/.bashrc \
+            aws --version
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible \
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy_environment:
+          workflow-id: ${CIRCLE_WORKFLOW_ID}
+      # Here's where you will add some code to rollback on failure      
 
 
 workflows:
@@ -163,3 +190,5 @@ workflows:
           filters:
             branches:
               only: [test-feature-branch]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
