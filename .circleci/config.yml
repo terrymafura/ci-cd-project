@@ -154,9 +154,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible tar gzip
-            python3 -m pip install awscliv2
-            echo 'alias aws="awscliv2"' >> ~/.bashrc && source ~/.bashrc
+            apk add --update ansible tar gzip zip gcompat && \
+            curl -s https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.1.39.zip -o awscliv2.zip && \
+            unzip awscliv2.zip && ./aws/install && \
             aws --version
       - run:
           name: Configure server
