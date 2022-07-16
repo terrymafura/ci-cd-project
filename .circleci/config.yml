@@ -154,7 +154,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update --no-cache-dir ansible tar gzip
+            apk add --update ansible tar gzip
             python3 -m pip install awscliv2
             echo 'alias aws="awscliv2"' >> ~/.bashrc && source ~/.bashrc
             aws --version
