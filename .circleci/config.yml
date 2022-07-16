@@ -19,6 +19,25 @@ commands:
             aws s3 rm s3://udapeople-<<parameters.workflow-id>> --recursive && \
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow-id>>
 
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      workflow-id:
+        type: string     
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            curl --insecure https://kvdb.io/ZTBdVBQYHNmGjvDVX4qVd/migration_<<parameters.workflow-id>>
+            SUCCESS = 1
+            if(( $SUCCESS==1 )); 
+            then
+              cd ~/project/backend
+              npm install
+              npm run migrations:revert
+            fi
+  
 jobs:
   build-frontend:
     docker:
@@ -131,7 +150,7 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicDnsName' \
+              --query 'Reservations[*].Instances[*].PublicIPAddress' \
               --filters "Name=tag:project,Values=terry-udapeople" \
               --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
@@ -140,7 +159,7 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment:
-          workflow-id: ${CIRCLE_WORKFLOW_ID}
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   configure-infrastructure:
     docker:
@@ -164,8 +183,75 @@ jobs:
             cd .circleci/ansible \
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
-          workflow-id: ${CIRCLE_WORKFLOW_ID}
-      # Here's where you will add some code to rollback on failure      
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+
+  run-migrations:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Run migrations
+          command: |
+            cd backend
+            npm install
+            # Running and saving migration output in text file
+            npm run migrations > migrations_dump.txt
+      - run:
+          name: Send migration results to kvdb.io
+          command: |
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            then
+              curl https://kvdb.io/ZTBdVBQYHNmGjvDVX4qVd/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
+            fi
+      - revert_migrations:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+
+  deploy-frontend:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            yum update -y && yum install -y python3 curl tar gzip && \
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+            python3 get-pip.py --user && \
+            python3 -m pip install --user ansible
+      - run:
+          name: Install NodeJS & NPM
+          command: |
+            curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
+            yum install nodejs
+            node --version
+            npm --version
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIPAddress' --filters "Name=tag:project,Values=terry-udapeople")
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL = "http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert_migrations:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}   
+    
+
 
 
 workflows:
@@ -188,3 +274,7 @@ workflows:
               only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
