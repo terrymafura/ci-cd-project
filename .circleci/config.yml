@@ -134,7 +134,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicDnsName' \
               --filters "Name=tag:project,Values=terry-udapeople" \
               --output text >> .circleci/ansible/inventory.txt \
-            echo inventory.txt
+            cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
