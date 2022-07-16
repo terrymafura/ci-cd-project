@@ -154,11 +154,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --update ansible tar gzip && \
-            python3 -m pip install awscliv2 \
-            echo 'export PATH=$PATH:~/.local/bin' >>~/.bashrc \
-            echo 'alias aws="awscliv2"' >>~/.bashrc \
-            source ~/.bashrc \
+            apk add --update --no-cache-dir ansible tar gzip
+            python3 -m pip install awscliv2
+            echo 'alias aws="awscliv2"' >> ~/.bashrc && source ~/.bashrc
             aws --version
       - run:
           name: Configure server
