@@ -130,12 +130,11 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
-            pwd
-            # aws ec2 describe-instances \
-            #   --query 'Reservations[*].Instances[*].PublicDnsName' \
-            #   --filters "Name=tag:project,Values=terry-udapeople" \
-            #   --output text >> project/.circleci/ansible/inventory.txt \
-            # echo inventory.txt
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicDnsName' \
+              --filters "Name=tag:project,Values=terry-udapeople" \
+              --output text >> .circleci/ansible/inventory.txt \
+            echo inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
@@ -156,9 +155,9 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible tar gzip && \
-            python3 -m pip install awscliv2 && ~/.local/bin/awscliv2 --install \
+            python3 -m pip install awscliv2 \
             echo 'export PATH=$PATH:~/.local/bin' >>~/.bashrc \
-            echo 'alias aws="awsv2"' >>~/.bashrc \
+            echo 'alias aws="awscliv2"' >>~/.bashrc \
             source ~/.bashrc \
             aws --version
       - run:
