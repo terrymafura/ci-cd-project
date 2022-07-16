@@ -149,8 +149,6 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["3c:7d:40:74:8c:f9:35:1e:c2:5f:11:bc:59:56:0e:c7"]
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -158,7 +156,8 @@ jobs:
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
             python3 get-pip.py --user && \
             python3 -m pip install --user ansible
-
+      - attach_workspace:
+          at: ~/
       - run:
           name: Configure server
           command: |
