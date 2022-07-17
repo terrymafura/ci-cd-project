@@ -198,6 +198,7 @@ jobs:
             npm install
             npm audit fix --force
             npm run --force migrations > migrations_dump.txt
+            cat migrations_dump.txt
       - run:
           name: Send migration results to kvdb.io
           command: |
@@ -270,9 +271,6 @@ jobs:
             yum update -y && yum install -y python3 curl tar gzip openssh-clients && \
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
             python3 get-pip.py --user
-            python3 -m pip install --user ansible
-            export PATH=$PATH:~/.local/bin
-            ansible --version
       - run:
           name: Install NodeJS & NPM
           command: |
@@ -293,6 +291,9 @@ jobs:
       - run:
           name: Deploy backend with Ansible
           command: |
+            python3 -m pip install --user ansible
+            export PATH=$PATH:~/.local/bin
+            ansible --version
             cd .circleci/ansible
             echo "Contents os the inventory.txt file is -------"
             cat inventory.txt
