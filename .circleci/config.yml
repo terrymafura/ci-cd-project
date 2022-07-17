@@ -232,22 +232,26 @@ jobs:
       - run:
           name: Get backend url
           command: |
+            aws --version
+            echo "******* Checking EC2 IP ********"
             aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIPAddress' \
-              --filters "Name=tag:project,Values=terry-udapeople"
-            # export BACKEND_IP=$()
-            # export API_URL="http://${BACKEND_IP}:3030"
-            # echo "API_URL = ${API_URL}"
-            # echo API_URL = "http://${BACKEND_IP}:3030" >> frontend/.env
-            # cat frontend/.env
-      # - run:
-      #     name: Deploy frontend objects
-      #     command: |
-      #       cd frontend
-      #       npm install
-      #       npm run build
-      #       tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-      #       aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=terry-udapeople" \
+              --output text >> ip.txt
+            echo "******* Done Checking EC2 IP ********"
+            export BACKEND_IP=$(cat ip.txt)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL = "http://${BACKEND_IP}:3030" >> frontend/.env
+            cat frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm install
+            npm run build
+            tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
