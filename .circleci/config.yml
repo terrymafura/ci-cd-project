@@ -223,8 +223,7 @@ jobs:
       - run:
           name: Install NodeJS & NPM
           command: |
-            curl -sL https://rpm.nodesource.com/setup_13.x
-            yum install nodejs
+            yum install nodejs13
             node --version
             npm --version
       - attach_workspace:
