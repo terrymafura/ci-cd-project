@@ -29,7 +29,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            export SUCCESS=$(curl --insecure https://kvdb.io/ZTBdVBQYHNmGjvDVX4qVd/migration_<<parameters.workflow-id>>)
+            export SUCCESS=$(curl https://kvdb.io/HudNfC6a4RCQe5hVCUjqfK/migration_<<parameters.workflow-id>>)
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -203,7 +203,7 @@ jobs:
           command: |
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/ZTBdVBQYHNmGjvDVX4qVd/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
+              curl https://kvdb.io/HudNfC6a4RCQe5hVCUjqfK/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
       - revert-migrations:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -267,9 +267,12 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum update -y && yum install -y python3 curl tar gzip && \
+            yum update -y && yum install -y python3 curl tar gzip openssh-clients && \
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
             python3 get-pip.py --user
+            python3 -m pip install --user ansible
+            export PATH=$PATH:~/.local/bin
+            ansible --version
       - run:
           name: Install NodeJS & NPM
           command: |
@@ -291,11 +294,8 @@ jobs:
           name: Deploy backend with Ansible
           command: |
             cd .circleci/ansible
-            python3 -m pip install --user ansible
-            export PATH=$PATH:~/.local/bin
             echo "Contents os the inventory.txt file is -------"
             cat inventory.txt
-            ansible --version
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
