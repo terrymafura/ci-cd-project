@@ -264,8 +264,6 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["3c:7d:40:74:8c:f9:35:1e:c2:5f:11:bc:59:56:0e:c7"]
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -280,6 +278,8 @@ jobs:
             yum install -y nodejs
             node --version
             npm --version
+      - attach_workspace:
+          at: ~/
       - run:
           name: Deploy backend
           command: |
@@ -288,6 +288,9 @@ jobs:
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
+      - run:
+          name: Deploy backend with Ansible
+          command: |
             cd .circleci/ansible
             echo "Contents os the inventory.txt file is -------"
             cat inventory.txt
