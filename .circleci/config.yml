@@ -269,8 +269,7 @@ jobs:
           command: |
             yum update -y && yum install -y python3 curl tar gzip && \
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-            python3 get-pip.py --user && \
-            python3 -m pip install --user ansible
+            python3 get-pip.py --user
       - run:
           name: Install NodeJS & NPM
           command: |
@@ -292,6 +291,7 @@ jobs:
           name: Deploy backend with Ansible
           command: |
             cd .circleci/ansible
+            python3 -m pip install --user ansible
             echo "Contents os the inventory.txt file is -------"
             cat inventory.txt
             ansible --version
