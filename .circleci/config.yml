@@ -292,6 +292,7 @@ jobs:
           command: |
             cd .circleci/ansible
             python3 -m pip install --user ansible
+            export PATH=$PATH:~/.local/bin
             echo "Contents os the inventory.txt file is -------"
             cat inventory.txt
             ansible --version
