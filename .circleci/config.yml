@@ -223,7 +223,7 @@ jobs:
       - run:
           name: Install NodeJS & NPM
           command: |
-            yum install epel-release && yum install nodejs
+            yum install nodejs
             node --version
             npm --version
       - attach_workspace:
