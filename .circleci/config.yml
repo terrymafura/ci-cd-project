@@ -257,6 +257,53 @@ jobs:
       - revert-migrations:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}   
     
+  deploy-backend:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["3c:7d:40:74:8c:f9:35:1e:c2:5f:11:bc:59:56:0e:c7"]
+      - run:
+          name: Install dependencies
+          command: |
+            yum update -y && yum install -y python3 curl tar gzip && \
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+            python3 get-pip.py --user && \
+            python3 -m pip install --user ansible
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Install dependencies
+          command: |
+            yum update -y && yum install -y python3 curl tar gzip && \
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+            python3 get-pip.py --user && \
+            python3 -m pip install --user ansible
+      - run:
+          name: Install NodeJS & NPM
+          command: |
+            curl --silent --location https://rpm.nodesource.com/setup_14.x | bash -
+            yum install -y nodejs
+            node --version
+            npm --version
+      - run:
+          name: Deploy backend
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            tar -C backend -czvf artifact.tar.gz .
+            cd .circleci/ansible
+            echo "Contents os the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      - destroy-environment:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7} 
+
 
 
 
@@ -284,3 +331,5 @@ workflows:
           requires: [configure-infrastructure]
       - deploy-frontend:
           requires: [run-migrations]
+      - deploy-backend:
+            requires: [run-migrations]
