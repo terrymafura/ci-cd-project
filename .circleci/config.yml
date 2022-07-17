@@ -271,15 +271,6 @@ jobs:
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
             python3 get-pip.py --user && \
             python3 -m pip install --user ansible
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            yum update -y && yum install -y python3 curl tar gzip && \
-            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-            python3 get-pip.py --user && \
-            python3 -m pip install --user ansible
       - run:
           name: Install NodeJS & NPM
           command: |
@@ -287,6 +278,8 @@ jobs:
             yum install -y nodejs
             node --version
             npm --version
+      - attach_workspace:
+          at: ~/
       - run:
           name: Deploy backend
           command: |
