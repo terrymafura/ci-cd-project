@@ -34,7 +34,7 @@ commands:
             then
               cd ~/project/backend
               npm install
-              npm run migrations:revert
+              npm run --force migrations:revert
             fi
   
 jobs:
@@ -288,6 +288,8 @@ jobs:
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
+            echo "**** ls in root DIR ****"
+            ls -l
       - run:
           name: Deploy backend with Ansible
           command: |

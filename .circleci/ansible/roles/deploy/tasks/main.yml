@@ -33,15 +33,24 @@
   file:
     path: ~/backend-app
     state: directory
+  shell: |
+    echo "**** ls in backend-app DIR ****"
+    cd ~/backend-app
+    ls -l
 
 - name: "copy backend artifact"
   template:
     src: "project/artifact.tar.gz"
     dest: "~/"
+  shell: |
+    echo "**** ls in root DIR ****"
+    ls -l
 
 - name: "Extract the zipped artifact"
   shell: |
     tar -xvzf artifact.tar.gz -C ~/backend-app
+    echo "**** ls in backend-app DIR ****"
+    ls -l ~/backend-app
 
 - name: "Execute node"
   shell: |
