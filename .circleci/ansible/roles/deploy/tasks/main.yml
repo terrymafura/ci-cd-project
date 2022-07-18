@@ -30,16 +30,19 @@
     state: present
 
 - name: "create a directory"
+  become: true
   file:
     path: ~/backend-app
     state: directory
 
 - name: "copy backend artifact"
+  become: true
   template:
     src: "project/artifact.tar.gz"
     dest: "~/backend-app"
 
 - name: "Extract the zipped artifact"
+  become: true
   shell: |
     tar -xvzf artifact.tar.gz -C ~/backend-app
     echo "**** ls in backend-app DIR ****"
