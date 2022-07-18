@@ -36,8 +36,8 @@
 
 - name: "copy backend artifact"
   template:
-    src: "~/project/artifact.tar.gz"
-    dest: "~/"
+    src: "project/artifact.tar.gz"
+    dest: "~/backend-app"
 
 - name: "Extract the zipped artifact"
   shell: |
