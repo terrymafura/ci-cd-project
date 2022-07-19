@@ -30,16 +30,14 @@
     state: present
 
 - name: "create a directory"
-  become: true
   file:
     path: ~/backend-app
     state: directory
 
 - name: "copy backend artifact"
-  become: true
-  template:
+  copy:
     src: "project/artifact.tar.gz"
-    dest: "~/backend-app"
+    dest: "~/"
 
 - name: "Extract the zipped artifact"
   become: true
