@@ -34,17 +34,11 @@
     path: ~/backend-app
     state: directory
 
-- name: "check server contents"
-  shell: |
-    echo "**** ls in root DIR ****"
-    ls -l ~/
-    cd backend-app
-
-# - name: "copy backend artifact"
-#   become: true
-#   unarchive:
-#     src: project/artifact.tar.gz
-#     dest: ~/backend-app
+- name: "copy backend artifact"
+  become: true
+  unarchive:
+    src: project/artifact.tar.gz
+    dest: ~/backend-app
 
 # - name: "Extract the zipped artifact"
 #   become: true
