@@ -34,21 +34,28 @@
     path: ~/backend-app
     state: directory
 
-- name: "copy backend artifact"
-  copy:
-    src: "project/artifact.tar.gz"
-    dest: "~/"
-
-- name: "Extract the zipped artifact"
-  become: true
+- name: "check server contents"
   shell: |
-    tar -xvzf artifact.tar.gz -C ~/backend-app
-    echo "**** ls in backend-app DIR ****"
-    ls -l ~/backend-app
-
-- name: "Execute node"
-  shell: |
+    echo "**** ls in root DIR ****"
+    ls -l ~/
     cd backend-app
-    npm install
-    pm2 stop default
-    pm2 start npm -- start
+
+# - name: "copy backend artifact"
+#   become: true
+#   unarchive:
+#     src: project/artifact.tar.gz
+#     dest: ~/backend-app
+
+# - name: "Extract the zipped artifact"
+#   become: true
+#   shell: |
+#     tar -xvzf artifact.tar.gz -C ~/backend-app
+#     echo "**** ls in backend-app DIR ****"
+#     ls -l ~/backend-app
+
+# - name: "Execute node"
+#   shell: |
+#     cd backend-app
+#     npm install
+#     pm2 stop default
+#     pm2 start npm -- start
