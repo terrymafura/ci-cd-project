@@ -34,7 +34,7 @@ commands:
             then
               cd ~/project/backend
               npm install
-              npm run migration:revert
+              npm run migrations:revert
             fi
   
 jobs:
@@ -330,11 +330,11 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=terry-udapeople" \
               --output text >> ip.txt
-            export BACKEND_IP=$(cat ip.txt)
-            echo "${BACKEND_IP}"
+            cat ip.txt
       - run:
           name: Backend smoke test.
           command: |
+            export BACKEND_IP=$(cat ip.txt)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
