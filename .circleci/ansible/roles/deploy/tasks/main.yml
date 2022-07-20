@@ -41,7 +41,7 @@
   become: true
   unarchive:
     src: files/artifact.tar.gz
-    dest: ~/backend-app/artifact.tar.gz
+    dest: ~/backend-app/
 
 # - name: "copy backend artifact"
 #   become: true
