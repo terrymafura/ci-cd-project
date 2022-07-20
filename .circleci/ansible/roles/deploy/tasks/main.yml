@@ -33,6 +33,7 @@
   shell: env
 
 - name: "Create the backend-app directory"
+  become: true
   file:
     path: ~/backend-app
     state: directory
