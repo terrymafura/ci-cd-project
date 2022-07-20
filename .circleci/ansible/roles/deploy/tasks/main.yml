@@ -33,13 +33,11 @@
   shell: env
 
 - name: "Create the backend-app directory"
-  become: true
   file:
     path: ~/backend-app
     state: directory
 
 - name: "Extract Artifact"
-  become: true
   unarchive:
     src: files/artifact.tar.gz
     dest: ~/backend-app/
@@ -58,7 +56,6 @@
 #     ls -l ~/backend-app
 
 - name: "Execute node"
-  become: true
   shell: |
     cd backend-app
     npm install
