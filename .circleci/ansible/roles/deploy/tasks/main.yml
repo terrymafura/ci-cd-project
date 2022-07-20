@@ -32,11 +32,16 @@
 - name: "The Remote Environment"
   shell: env
 
+- name: "Create the backend-app directory"
+  file:
+    path: ~/backend-app
+    state: directory
+
 - name: "Extract Artifact"
   become: true
   unarchive:
-    src: project/.circleci/ansible/roles/deploy/files/artifact.tar.gz
-    dest: ~/
+    src: files/artifact.tar.gz
+    dest: ~/backend-app/artifact.tar.gz
 
 # - name: "copy backend artifact"
 #   become: true
@@ -54,6 +59,7 @@
 - name: "Execute node"
   become: true
   shell: |
+    cd backend-app
     npm install
     pm2 stop default
     pm2 start npm -- start
