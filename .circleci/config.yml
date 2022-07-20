@@ -311,18 +311,23 @@ jobs:
 
   smoke-test:
     docker:
-      - image: alpine:latest
+      - image: amazon/aws-cli
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl tar
+            yum update -y && yum install -y curl tar
       - attach_workspace:
           at: ~/
       - run:
           name: Get backend url
           command: |
+            echo "******* Checking EC2 IP ********"
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=terry-udapeople" \
+              --output text >> ip.txt
             export BACKEND_IP=$(cat ip.txt)
             echo "${BACKEND_IP}"
       - run:
