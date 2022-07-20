@@ -29,25 +29,30 @@
     production: yes
     state: present
 
-- name: "create a directory"
-  file:
-    path: ~/backend-app
-    state: directory
+- name: "The Remote Environment"
+  shell: env
 
-- name: "copy backend artifact"
+- name: "Extract Artifact"
   become: true
-  template:
-    src: artifact.tar.gz
+  unarchive:
+    src: files/artifact.tar.gz
     dest: ~/
 
-- name: "Extract the zipped artifact"
-  become: true
-  shell: |
-    tar -xvzf artifact.tar.gz -C ~/backend-app
-    echo "**** ls in backend-app DIR ****"
-    ls -l ~/backend-app
+# - name: "copy backend artifact"
+#   become: true
+#   template:
+#     src: artifact.tar.gz
+#     dest: ~/
+
+# - name: "Extract the zipped artifact"
+#   become: true
+#   shell: |
+#     tar -xvzf artifact.tar.gz -C ~/backend-app
+#     echo "**** ls in backend-app DIR ****"
+#     ls -l ~/backend-app
 
 - name: "Execute node"
+  become: true
   shell: |
     cd backend-app
     npm install
