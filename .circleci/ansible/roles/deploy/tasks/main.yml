@@ -35,7 +35,7 @@
 - name: "Extract Artifact"
   become: true
   unarchive:
-    src: files/artifact.tar.gz
+    src: project/.circleci/ansible/roles/deploy/files/artifact.tar.gz
     dest: ~/
 
 # - name: "copy backend artifact"
@@ -54,7 +54,6 @@
 - name: "Execute node"
   become: true
   shell: |
-    cd backend-app
     npm install
     pm2 stop default
     pm2 start npm -- start
