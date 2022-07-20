@@ -36,16 +36,16 @@
 
 - name: "copy backend artifact"
   become: true
-  unarchive:
-    src: project/artifact.tar.gz
-    dest: ~/backend-app
+  template:
+    src: artifact.tar.gz
+    dest: ~/
 
-# - name: "Extract the zipped artifact"
-#   become: true
-#   shell: |
-#     tar -xvzf artifact.tar.gz -C ~/backend-app
-#     echo "**** ls in backend-app DIR ****"
-#     ls -l ~/backend-app
+- name: "Extract the zipped artifact"
+  become: true
+  shell: |
+    tar -xvzf artifact.tar.gz -C ~/backend-app
+    echo "**** ls in backend-app DIR ****"
+    ls -l ~/backend-app
 
 - name: "Execute node"
   shell: |
