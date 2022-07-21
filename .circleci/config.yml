@@ -424,11 +424,11 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
+      - build-frontend:
           filters:
             branches:
               only: [test-feature-branch]
-      - build-backend
+      - build-backend:
           filters:
             branches:
               only: [test-feature-branch]
