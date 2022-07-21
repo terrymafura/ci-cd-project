@@ -475,8 +475,8 @@ workflows:
       - deploy-backend:
             requires: [run-migrations]
             filters:
-            branches:
-              only: [master]
+              branches:
+                only: [master]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
           filters:
