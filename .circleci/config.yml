@@ -179,6 +179,7 @@ jobs:
       - run:
           name: Configure server
           command: |
+            export PATH=$PATH:~/.local/bin
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is -------"
             cat inventory.txt
@@ -186,6 +187,8 @@ jobs:
       - run:
           name: Setup Monitoring with Prometheus and node_exporter
           command: |
+            python3 -m pip install --user ansible
+            export PATH=$PATH:~/.local/bin
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is -------"
             cat inventory.txt
