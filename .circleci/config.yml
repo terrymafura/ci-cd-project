@@ -173,12 +173,12 @@ jobs:
             yum update -y && yum install -y python3 curl tar gzip
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
             python3 get-pip.py --user
-            python3 -m pip install --user ansible
       - attach_workspace:
           at: ~/
       - run:
           name: Configure server
           command: |
+            python3 -m pip install --user ansible
             export PATH=$PATH:~/.local/bin
             cd .circleci/ansible
             echo "Contents of the inventory.txt file is -------"
