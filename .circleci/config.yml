@@ -170,21 +170,25 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum update -y && yum install -y python3 curl tar gzip && \
-            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-            python3 get-pip.py --user && \
+            yum update -y && yum install -y python3 curl tar gzip
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            python3 get-pip.py --user
             python3 -m pip install --user ansible
       - attach_workspace:
           at: ~/
       - run:
           name: Configure server
           command: |
-            cd .circleci/ansible \
+            cd .circleci/ansible
+            echo "Contents of the inventory.txt file is -------"
+            cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
       - run:
           name: Setup Monitoring with Prometheus and node_exporter
           command: |
-            cd .circleci/ansible \
+            cd .circleci/ansible
+            echo "Contents of the inventory.txt file is -------"
+            cat inventory.txt
             ansible-playbook -i inventory.txt configure-prometheus-node-exporter.yml
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -221,9 +225,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum update -y && yum install -y python3 curl tar gzip && \
-            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
-            python3 get-pip.py --user && \
+            yum update -y && yum install -y python3 curl tar gzip
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            python3 get-pip.py --user
             python3 -m pip install --user ansible
       - run:
           name: Install NodeJS & NPM
@@ -306,7 +310,7 @@ jobs:
             export PATH=$PATH:~/.local/bin
             ansible --version
             cd .circleci/ansible
-            echo "Contents os the inventory.txt file is -------"
+            echo "Contents of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment:
