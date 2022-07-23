@@ -170,7 +170,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum update -y && yum install -y python3 curl tar gzip
+            yum update -y && yum install -y python3 curl tar gzip openssh-clients
             curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
             python3 get-pip.py --user
       - attach_workspace:
