@@ -492,8 +492,8 @@ workflows:
           filters:
             branches:
               only: [test-feature-branch]
-      - cleanup:
-          requires: [cloudfront-update]
-          filters:
-            branches:
-              only: [test-feature-branch]
+      # - cleanup:
+      #     requires: [cloudfront-update]
+      #     filters:
+      #       branches:
+      #         only: [test-feature-branch]
